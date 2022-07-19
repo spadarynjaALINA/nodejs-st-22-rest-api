@@ -10,8 +10,8 @@ export class UsersService {
     return this.storage.create(createUserDto);
   }
 
-  findAll() {
-    return this.storage.all();
+  findAll(query) {
+    return this.storage.all(query);
   }
 
   findOne(id: string) {

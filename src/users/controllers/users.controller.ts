@@ -9,6 +9,7 @@ import {
   Put,
   HttpStatus,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -24,8 +25,9 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  findAll(@Query() query: { login: string; limit: number }) {
+    const { login, limit } = query;
+    return this.usersService.findAll({ login, limit });
   }
 
   @Get(':id')

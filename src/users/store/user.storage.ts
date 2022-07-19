@@ -1,10 +1,5 @@
-import {
-  HttpCode,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
-import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+
 import { v4 as uuid } from 'uuid';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
@@ -21,8 +16,17 @@ export class InMemoryUsersStore implements UsersStore {
     isDeleted: false,
   };
 
-  all(): IUser[] {
-    return this.users.filter((user) => user.isDeleted === false);
+  all(query: { limit: number; login: string }): IUser[] {
+    const limit = query.limit;
+    const login = query.login;
+    return this.users
+      .filter((user) => user.isDeleted === false && user.login.includes(login))
+      .sort((user1, user2) => {
+        if (user1.login < user2.login) return -1;
+        if (user1.login > user2.login) return 1;
+        return 0;
+      })
+      .slice(0, limit);
   }
 
   findById(id: string): IUser | void {
