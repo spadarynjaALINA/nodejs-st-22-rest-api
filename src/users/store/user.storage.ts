@@ -12,7 +12,7 @@ import { IUser, IUserResponse } from '../interfaces/users.interfaces';
 import { UsersStore } from '../interfaces/usersStore.interface';
 @Injectable()
 export class InMemoryUsersStore implements UsersStore {
-  users = [];
+  users: IUser[] = [];
 
   userResponse: IUserResponse = {
     id: 'id',
@@ -25,11 +25,12 @@ export class InMemoryUsersStore implements UsersStore {
     return this.users.filter((user) => user.isDeleted === false);
   }
 
-  findById(id: string): IUser | undefined {
-    const User = this.users.find(
+  findById(id: string): IUser | void {
+    const user = this.users.find(
       (User) => User.id === id && User.isDeleted === false,
     );
-    return User;
+    if (user) return user;
+    throw new HttpException('User not exist', HttpStatus.UNPROCESSABLE_ENTITY);
   }
 
   create(UserDto: CreateUserDto): IUserResponse {
@@ -48,41 +49,34 @@ export class InMemoryUsersStore implements UsersStore {
   }
 
   update(params: UpdateUserDto): IUserResponse | void {
-    // if (!this.findById(id)) {
-    //   return this.error.notFound('user');
-    // } else {
-    //   this.users.map((User) => {
-    //     if (User.id === id) {
-    //       // Object.assign(User, params);
-    //       for (const key in User) {
-    //         console.log(key, this.userResponce[key]);
-    //         if (key !== 'password') {
-    //           this.userResponce[key] = User[key];
-    //         }
-    //       }
-    //     }
-    //   });
-    //   return this.userResponce;
-    // }
-  }
-  delete(id: string): string | void {
-    if (!!this.findById(id)) {
-      this.users = this.users.map((user) =>
-        user.id === id ? (user.isDeleted = true) : user,
-      );
+    if (!this.findById(params.id)) {
       throw new HttpException(
-        {
-          status: HttpStatus.NO_CONTENT,
-          message: 'User has been deleted',
-        },
+        'User not exist',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     } else {
+      this.users.map((User) => {
+        if (User.id === params.id) {
+          Object.assign(User, params);
+          for (const key in User) {
+            if (key !== 'password') {
+              this.userResponse[key] = User[key];
+            }
+          }
+        }
+      });
+      return this.userResponse;
+    }
+  }
+  delete(id: string): string | void {
+    if (!!this.findById(id)) {
+      this.users = this.users.map((user) => {
+        user.id === id ? (user.isDeleted = true) : user;
+        return user;
+      });
+    } else {
       throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          error: 'User not exist',
-        },
+        'User not exist',
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
@@ -92,7 +86,7 @@ export class InMemoryUsersStore implements UsersStore {
       (user) => user.login === name && user.isDeleted === false,
     );
   }
-  private static instance;
+  private static instance: UsersStore;
   constructor() {
     if (!InMemoryUsersStore.instance) {
       InMemoryUsersStore.instance = this;
