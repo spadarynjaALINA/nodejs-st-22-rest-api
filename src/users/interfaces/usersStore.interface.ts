@@ -8,4 +8,5 @@ export interface UsersStore {
   create: (params: CreateUserDto) => IUserResponse;
   update: (params: UpdateUserDto) => IUserResponse | void;
   delete: (id: string) => string | void;
+  findOneByName: (name: string) => void;
 }

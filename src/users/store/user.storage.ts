@@ -16,7 +16,7 @@ export class InMemoryUsersStore implements UsersStore {
 
   userResponse: IUserResponse = {
     id: 'id',
-    login: '',
+    login: 'login',
     age: 24,
     isDeleted: false,
   };
@@ -70,6 +70,13 @@ export class InMemoryUsersStore implements UsersStore {
       this.users = this.users.map((user) =>
         user.id === id ? (user.isDeleted = true) : user,
       );
+      throw new HttpException(
+        {
+          status: HttpStatus.NO_CONTENT,
+          message: 'User has been deleted',
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
     } else {
       throw new HttpException(
         {
@@ -79,5 +86,17 @@ export class InMemoryUsersStore implements UsersStore {
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     }
+  }
+  findOneByName(name: string) {
+    return !!this.users.find(
+      (user) => user.login === name && user.isDeleted === false,
+    );
+  }
+  private static instance;
+  constructor() {
+    if (!InMemoryUsersStore.instance) {
+      InMemoryUsersStore.instance = this;
+    }
+    return InMemoryUsersStore.instance;
   }
 }
