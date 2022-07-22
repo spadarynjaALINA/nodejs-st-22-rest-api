@@ -11,3 +11,7 @@ export interface IUserResponse {
   age: number;
   isDeleted: boolean;
 }
+export interface IQuery {
+  loginSubstring: string;
+  limit: number;
+}

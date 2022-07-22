@@ -6,7 +6,7 @@ import {
   Max,
   Min,
 } from 'class-validator';
-import { IsUserAlreadyExist } from '../customValidator';
+
 export class UpdateUserDto {
   @IsString()
   @IsNotEmpty()

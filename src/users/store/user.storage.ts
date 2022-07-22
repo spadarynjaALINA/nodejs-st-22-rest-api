@@ -16,11 +16,19 @@ export class InMemoryUsersStore implements UsersStore {
     isDeleted: false,
   };
 
-  all(query: { limit: number; login: string }): IUser[] {
+  getAutoSuggestUsers(query: {
+    limit: number;
+    loginSubstring: string;
+  }): IUser[] {
     const limit = query.limit;
-    const login = query.login;
+    const loginSubstring = query.loginSubstring;
+    console.log(this.users);
+    console.log(query.loginSubstring);
     return this.users
-      .filter((user) => user.isDeleted === false && user.login.includes(login))
+      .filter(
+        (user) =>
+          user.isDeleted === false && user.login.includes(loginSubstring),
+      )
       .sort((user1, user2) => {
         if (user1.login < user2.login) return -1;
         if (user1.login > user2.login) return 1;

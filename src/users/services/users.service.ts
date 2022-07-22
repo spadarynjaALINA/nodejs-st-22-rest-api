@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
+import { IQuery } from '../interfaces/users.interfaces';
 import { UsersStore } from '../interfaces/usersStore.interface';
 
 @Injectable()
@@ -10,8 +11,8 @@ export class UsersService {
     return this.storage.create(createUserDto);
   }
 
-  findAll(query) {
-    return this.storage.all(query);
+  getAutoSuggestUsers(query: IQuery) {
+    return this.storage.getAutoSuggestUsers(query);
   }
 
   findOne(id: string) {

@@ -3,11 +3,9 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Put,
-  HttpStatus,
   HttpCode,
   Query,
 } from '@nestjs/common';
@@ -25,9 +23,11 @@ export class UsersController {
   }
 
   @Get()
-  findAll(@Query() query: { login: string; limit: number }) {
-    const { login, limit } = query;
-    return this.usersService.findAll({ login, limit });
+  getAutoSuggestUsers(
+    @Query() query: { loginSubstring: string; limit: number },
+  ) {
+    const { loginSubstring, limit } = query;
+    return this.usersService.getAutoSuggestUsers({ loginSubstring, limit });
   }
 
   @Get(':id')
