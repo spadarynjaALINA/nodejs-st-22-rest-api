@@ -22,5 +22,6 @@ export class UpdateUserDto {
   @IsInt()
   @Min(4)
   @Max(130)
+  @IsNotEmpty()
   age: number;
 }
