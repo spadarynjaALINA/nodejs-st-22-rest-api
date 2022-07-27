@@ -2,21 +2,19 @@ import {
   IsInt,
   IsNotEmpty,
   IsString,
+  IsUUID,
   Matches,
   Max,
   Min,
 } from 'class-validator';
-import { IsUserAlreadyExist } from '../customValidator';
 
 export class UpdateUserDto {
   @IsString()
   @IsNotEmpty()
+  @IsUUID(4)
   id: string;
   @IsString()
   @IsNotEmpty()
-  @IsUserAlreadyExist({
-    message: 'User $value already exists. Choose another name.',
-  })
   login: string;
   @IsNotEmpty()
   @Matches(/^(?=.*\d)(?=.*[a-zA-Z])(?!.*\s).*$/, {

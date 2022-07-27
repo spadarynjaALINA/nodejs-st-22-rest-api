@@ -1,29 +1,50 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { IQuery } from '../interfaces/users.interfaces';
-import { UsersStore } from '../interfaces/usersStore.interface';
+import { InjectModel } from '@nestjs/sequelize';
+import { User } from '../models/users.model';
+import { v4 as uuid } from 'uuid';
+import { Op } from 'sequelize';
 
 @Injectable()
 export class UsersService {
-  constructor(@Inject('UsersStore') private storage: UsersStore) {}
-  create(createUserDto: CreateUserDto) {
-    return this.storage.create(createUserDto);
+  constructor(@InjectModel(User) private userRepository: typeof User) {}
+
+  async create(UserDto: CreateUserDto) {
+    const newUser = {
+      ...UserDto,
+      id: uuid(),
+      isDeleted: false,
+    };
+    const user = await this.userRepository.create(newUser);
+    return user;
   }
 
-  getAutoSuggestUsers(query: IQuery) {
-    return this.storage.getAutoSuggestUsers(query);
+  async getAutoSuggestUsers(query: IQuery) {
+    const users = await this.userRepository.findAndCountAll({
+      where: { login: { [Op.substring]: query.loginSubstring || '' } },
+      limit: query.limit || 15,
+      order: [['login', 'ASC']],
+    });
+    return users;
   }
 
-  findOne(id: string) {
-    return this.storage.findById(id);
+  async findOne(id: string) {
+    return await this.userRepository.findOne({ where: { id: id } });
   }
 
-  update(updateUserDto: UpdateUserDto) {
-    return this.storage.update(updateUserDto);
+  async update(updateUserDto: UpdateUserDto) {
+    const user = await this.userRepository.update(updateUserDto, {
+      where: { id: updateUserDto.id },
+      returning: true,
+    });
+    return user[1][0];
   }
 
-  remove(id: string) {
-    return this.storage.delete(id);
+  async remove(id: string) {
+    return await this.userRepository.destroy({
+      where: { id: id },
+    });
   }
 }
