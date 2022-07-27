@@ -22,8 +22,6 @@ export class InMemoryUsersStore implements UsersStore {
   }): IUser[] {
     const limit = query.limit;
     const loginSubstring = query.loginSubstring;
-    console.log(this.users);
-    console.log(query.loginSubstring);
     return this.users
       .filter(
         (user) =>
