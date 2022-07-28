@@ -43,9 +43,15 @@ export class UsersService {
   }
 
   async remove(id: string) {
-    return await this.userRepository.destroy({
-      where: { id: id },
-
-    });
+    if ((await this.findOne(id)).isDeleted !== true) {
+      const user = await this.userRepository.update(
+        { isDeleted: true },
+        {
+          where: { id },
+          returning: true,
+        },
+      );
+      return user[1][0];
+    }
   }
 }

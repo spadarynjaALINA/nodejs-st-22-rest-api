@@ -15,6 +15,8 @@ import { UsersService } from '../services/users.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { IQuery } from '../interfaces/users.interfaces';
+import { handleError } from 'src/handle-errors/handleError';
+import { checkUser } from 'src/handle-errors/check-user';
 
 @Controller('users')
 export class UsersController {
@@ -24,22 +26,16 @@ export class UsersController {
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto).catch((err) => {
-      if (err.original.constraint === 'users_login_key') {
-        throw new HttpException(
-          `User with login '${createUserDto.login}' already exists`,
-          HttpStatus.CONFLICT,
-        );
-      }
-      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+      handleError(err, createUserDto.login, createUserDto.login);
     });
   }
 
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAutoSuggestUsers(@Query() query: IQuery) {
-    return await this.usersService.getAutoSuggestUsers(query).catch((err) => {
-      throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
-    });
+    return await this.usersService
+      .getAutoSuggestUsers(query)
+      .catch((err) => handleError(err));
   }
 
   @Get(':id')
@@ -47,18 +43,8 @@ export class UsersController {
   async findOne(@Param('id') id: string) {
     return await this.usersService
       .findOne(id)
-      .then((user) => {
-        if (!user) {
-          throw new Error();
-        }
-        return user;
-      })
-      .catch(() => {
-        throw new HttpException(
-          `User with id '${id}' not found`,
-          HttpStatus.NOT_FOUND,
-        );
-      });
+      .then((user) => checkUser(user))
+      .catch((err) => handleError(err, id));
   }
 
   @Put()
@@ -66,24 +52,8 @@ export class UsersController {
   async update(@Body() updateUserDto: UpdateUserDto) {
     return await this.usersService
       .update(updateUserDto)
-      .then((user) => {
-        if (!user) {
-          throw new Error();
-        }
-        return user;
-      })
-      .catch((err) => {
-        if (!!err.original && err.original.constraint === 'users_login_key') {
-          throw new HttpException(
-            `User with login '${updateUserDto.login}' already exists`,
-            HttpStatus.CONFLICT,
-          );
-        }
-        throw new HttpException(
-          `User with id '${updateUserDto.id}' not found`,
-          HttpStatus.NOT_FOUND,
-        );
-      });
+      .then((user) => checkUser(user))
+      .catch((err) => handleError(err, updateUserDto.id, updateUserDto.login));
   }
 
   @Delete(':id')
@@ -91,17 +61,7 @@ export class UsersController {
   async remove(@Param('id') id: string) {
     return await this.usersService
       .remove(id)
-      .then((user) => {
-        if (!user) {
-          throw new Error();
-        }
-        return user;
-      })
-      .catch(() => {
-        throw new HttpException(
-          `User with id '${id}' not found`,
-          HttpStatus.NOT_FOUND,
-        );
-      });
+      .then((user) => checkUser(user))
+      .catch((err) => handleError(err, id));
   }
 }
