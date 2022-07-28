@@ -45,6 +45,7 @@ export class UsersService {
   async remove(id: string) {
     return await this.userRepository.destroy({
       where: { id: id },
+
     });
   }
 }
