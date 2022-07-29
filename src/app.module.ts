@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ConfigModule } from '@nestjs/config';
-import { User } from './users/models/users.model';
+import { User } from '../models/user';
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath: '.env' }),

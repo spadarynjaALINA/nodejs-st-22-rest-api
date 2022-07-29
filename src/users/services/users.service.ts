@@ -3,7 +3,7 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { IQuery } from '../interfaces/users.interfaces';
 import { InjectModel } from '@nestjs/sequelize';
-import { User } from '../models/users.model';
+import { User } from '../../../models/user';
 import { v4 as uuid } from 'uuid';
 import { Op } from 'sequelize';
 

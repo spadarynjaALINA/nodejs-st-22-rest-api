@@ -36,5 +36,4 @@ export class User extends Model<User, UserCreationAttrs> {
     defaultValue: false,
   })
   isDeleted: boolean;
-  paranoid: true;
 }
