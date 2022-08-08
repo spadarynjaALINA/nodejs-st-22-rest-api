@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { IUser } from 'src/users/interfaces/users.interfaces';
 
 export const handleError = (err, id?: string, login?: string) => {
   if (err.original && err.original.constraint === 'users_login_key') {
