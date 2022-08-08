@@ -4,3 +4,8 @@ export const checkUser = (user) => {
   }
   return user;
 };
+export const checkGroup = (group) => {
+  if (!group) {
+    throw new Error('byId');
+  }
+};
