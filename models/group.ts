@@ -1,12 +1,13 @@
 import { Table, Model, Column, DataType } from 'sequelize-typescript';
 import { Permission } from 'src/interfaces/group.interface';
+import { StringDecoder } from 'string_decoder';
 
 interface GroupCreationAttrs {
   name: string;
   permission: Permission[];
 }
 
-@Table({ tableName: 'group' })
+@Table({ tableName: 'groups' })
 export class Group extends Model<Group, GroupCreationAttrs> {
   @Column({
     type: DataType.UUID,
@@ -22,7 +23,7 @@ export class Group extends Model<Group, GroupCreationAttrs> {
   })
   name: string;
   @Column({
-    type: DataType.ARRAY,
+    type: DataType.ARRAY(DataType.STRING),
     allowNull: false,
   })
   permission: Permission[];

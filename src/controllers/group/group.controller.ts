@@ -14,7 +14,7 @@ import { CreateGroupDto } from 'src/dto/create-Group.dto';
 import { GroupService } from 'src/services/group/group.service';
 import { checkGroup } from 'src/handle-errors/check-user';
 import { GroupDto } from 'src/dto/group.dto';
-@Controller('group')
+@Controller('groups')
 export class GroupController {
   constructor(private readonly GroupsService: GroupService) {}
 

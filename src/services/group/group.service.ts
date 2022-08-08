@@ -16,6 +16,7 @@ export class GroupService {
       id: uuid(),
     };
     const group = await this.groupRepository.create(newGroup);
+    console.log(group);
     return group;
   }
 
