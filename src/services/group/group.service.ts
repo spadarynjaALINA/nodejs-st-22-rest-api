@@ -27,7 +27,7 @@ export class GroupService {
   }
   async addUsersToGroup(addUserDto: AddUserDto, id: string) {
     try {
-      const result = await this.sequelize.transaction(async (t) => {
+      await this.sequelize.transaction(async (t) => {
         const group = await this.groupRepository.findOne({
           where: { id: id },
           transaction: t,
@@ -48,12 +48,7 @@ export class GroupService {
           return handleError('byId');
         }
       });
-      // 62de4c46-cd43-4b67-904d-bddfbfb75421-user
-      // 5e75fb2a-8202-4891-9880-d875bdaff76e -group
-      console.log(result);
-      return await this.groupRepository.findOne({
-        where: { id: id },
-      });
+      return await this.findOne(id);
     } catch (err) {
       throw err;
     }
