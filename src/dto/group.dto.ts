@@ -1,7 +1,11 @@
-import { Permission } from 'src/interfaces/group.interface';
-
+import { IsString, IsNotEmpty, IsEnum, IsArray } from 'class-validator';
+import { IsUUID } from 'sequelize-typescript';
+import { Permission, PermissionGroup } from 'src/interfaces/group.interface';
 export class GroupDto {
-  readonly id: string;
+  @IsString()
+  @IsNotEmpty()
   readonly name: string;
-  readonly permission: Permission[];
+  @IsArray()
+  @IsEnum(PermissionGroup, { each: true })
+  readonly permissions: Permission[];
 }

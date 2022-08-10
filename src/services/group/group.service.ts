@@ -15,6 +15,7 @@ export class GroupService {
       ...GroupDto,
       id: uuid(),
     };
+    console.log(newGroup);
     const group = await this.groupRepository.create(newGroup);
     console.log(group);
     return group;
@@ -29,7 +30,7 @@ export class GroupService {
     return await this.groupRepository.findOne({ where: { id: id } });
   }
 
-  async update(updateGroupDto: GroupDto): Promise<IGroup> {
+  async update(updateGroupDto: IGroup): Promise<IGroup> {
     const group = await this.groupRepository.update(updateGroupDto, {
       where: { id: updateGroupDto.id },
       returning: true,

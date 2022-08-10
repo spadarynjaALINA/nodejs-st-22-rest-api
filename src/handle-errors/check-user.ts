@@ -6,6 +6,8 @@ export const checkUser = (user) => {
 };
 export const checkGroup = (group) => {
   if (!group) {
-    throw new Error('byId');
+    throw new Error('byIdGroup');
+  } else {
+    return group;
   }
 };

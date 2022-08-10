@@ -1,6 +1,12 @@
-import { Permission } from 'src/interfaces/group.interface';
+import { IsString, IsNotEmpty, IsEnum, IsArray } from 'class-validator';
+import { Permission, PermissionGroup } from 'src/interfaces/group.interface';
 
 export class CreateGroupDto {
-  readonly name: string;
-  readonly permission: Permission[];
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsArray()
+  @IsEnum(PermissionGroup, { each: true })
+  permissions: Permission[];
 }

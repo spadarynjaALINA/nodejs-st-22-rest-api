@@ -13,7 +13,7 @@ import { handleError } from 'src/handle-errors/handleError';
 import { CreateGroupDto } from 'src/dto/create-Group.dto';
 import { GroupService } from 'src/services/group/group.service';
 import { checkGroup } from 'src/handle-errors/check-user';
-import { GroupDto } from 'src/dto/group.dto';
+import { IGroup } from 'src/interfaces/group.interface';
 @Controller('groups')
 export class GroupController {
   constructor(private readonly GroupsService: GroupService) {}
@@ -44,7 +44,7 @@ export class GroupController {
 
   @Put()
   @HttpCode(HttpStatus.OK)
-  async update(@Body() GroupDto: GroupDto) {
+  async update(@Body() GroupDto: IGroup) {
     return await this.GroupsService.update(GroupDto)
       .then((Group) => checkGroup(Group))
       .catch((err) => handleError(err, GroupDto.id, GroupDto.name));

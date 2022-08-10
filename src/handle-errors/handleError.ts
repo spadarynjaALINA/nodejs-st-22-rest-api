@@ -13,5 +13,11 @@ export const handleError = (err, id?: string, login?: string) => {
       HttpStatus.NOT_FOUND,
     );
   }
+   if (err.message === 'byIdGroup') {
+    throw new HttpException(
+      `User with id '${id}' not found`,
+      HttpStatus.NOT_FOUND,
+    );
+  }
   throw new HttpException(err, HttpStatus.INTERNAL_SERVER_ERROR);
 };
