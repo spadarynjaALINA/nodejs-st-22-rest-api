@@ -35,7 +35,7 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   password: string;
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   age: number;
