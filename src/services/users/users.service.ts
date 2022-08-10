@@ -32,7 +32,10 @@ export class UsersService {
   }
 
   async findOne(id: string): Promise<IUser> {
-    return await this.userRepository.findOne({ where: { id: id } });
+    return await this.userRepository.findOne({
+      where: { id: id },
+      include: { all: true },
+    });
   }
 
   async update(updateUserDto: UpdateUserDto): Promise<IUser> {

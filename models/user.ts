@@ -1,4 +1,13 @@
-import { Table, Model, Column, DataType } from 'sequelize-typescript';
+import {
+  Table,
+  Model,
+  Column,
+  DataType,
+  BelongsTo,
+  BelongsToMany,
+} from 'sequelize-typescript';
+import { Group } from './group';
+import { UserGroups } from './user-group';
 
 interface UserCreationAttrs {
   login: string;
@@ -26,7 +35,7 @@ export class User extends Model<User, UserCreationAttrs> {
   })
   password: string;
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.NUMBER,
     allowNull: false,
   })
   age: number;
@@ -36,4 +45,6 @@ export class User extends Model<User, UserCreationAttrs> {
     defaultValue: false,
   })
   isDeleted: boolean;
+  @BelongsToMany(() => Group, () => UserGroups)
+  group: Group[];
 }

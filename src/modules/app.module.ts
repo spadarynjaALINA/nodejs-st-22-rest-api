@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { Group } from 'models/group';
 import { User } from 'models/user';
 import { GroupModule } from './group/group.module';
+import { UserGroups } from 'models/user-group';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { GroupModule } from './group/group.module';
       username: 'postgres',
       password: 'postgres',
       database: 'postgres',
-      models: [User, Group],
+      models: [User, Group, UserGroups],
       autoLoadModels: true,
     }),
   ],

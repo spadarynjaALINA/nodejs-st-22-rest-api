@@ -1,5 +1,13 @@
-import { Table, Model, Column, DataType } from 'sequelize-typescript';
+import {
+  Table,
+  Model,
+  Column,
+  DataType,
+  BelongsToMany,
+} from 'sequelize-typescript';
 import { Permission } from 'src/interfaces/group.interface';
+import { User } from './user';
+import { UserGroups } from './user-group';
 
 interface GroupCreationAttrs {
   name: string;
@@ -27,4 +35,6 @@ export class Group extends Model<Group, GroupCreationAttrs> {
     allowNull: false,
   })
   permissions: Permission[];
+  @BelongsToMany(() => User, () => UserGroups)
+  user: User[];
 }
