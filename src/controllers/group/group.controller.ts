@@ -14,6 +14,7 @@ import { CreateGroupDto } from 'src/dto/create-Group.dto';
 import { GroupService } from 'src/services/group/group.service';
 import { checkGroup } from 'src/handle-errors/check-user';
 import { IGroup } from 'src/interfaces/group.interface';
+import { AddUserDto } from 'src/dto/addUser';
 @Controller('groups')
 export class GroupController {
   constructor(private readonly GroupsService: GroupService) {}
@@ -24,6 +25,13 @@ export class GroupController {
     return await this.GroupsService.create(createGroupDto).catch((err) => {
       handleError(err, createGroupDto.name, createGroupDto.name);
     });
+  }
+  @Post(':id')
+  @HttpCode(HttpStatus.OK)
+  async addUsersToGroup(@Param('id') id: string, @Body() addUser: AddUserDto) {
+    return await this.GroupsService.addUsersToGroup(addUser, id).catch((err) =>
+      handleError(err),
+    );
   }
 
   @Get()
