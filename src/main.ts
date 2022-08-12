@@ -9,5 +9,13 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   await app.listen(PORT ?? 3000);
+  process.on('unhandledRejection', (error) => {
+    throw error;
+  });
+
+  process.on('uncaughtException', (error) => {
+    throw error;
+  });
 }
+
 bootstrap();
