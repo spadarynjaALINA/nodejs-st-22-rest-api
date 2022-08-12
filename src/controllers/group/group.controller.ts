@@ -8,6 +8,8 @@ import {
   Put,
   HttpCode,
   HttpStatus,
+  Inject,
+  Logger,
 } from '@nestjs/common';
 import { handleError } from 'src/handle-errors/handleError';
 import { CreateGroupDto } from 'src/dto/create-Group.dto';
@@ -15,15 +17,19 @@ import { GroupService } from 'src/services/group/group.service';
 import { checkGroup } from 'src/handle-errors/check-user';
 import { IGroup } from 'src/interfaces/group.interface';
 import { AddUserDto } from 'src/dto/addUser';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 @Controller('groups')
 export class GroupController {
-  constructor(private readonly GroupsService: GroupService) {}
+  constructor(
+    private readonly GroupsService: GroupService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createGroupDto: CreateGroupDto) {
     return await this.GroupsService.create(createGroupDto).catch((err) => {
       handleError(err, createGroupDto.name, createGroupDto.name);
+
     });
   }
   @Post(':id')
