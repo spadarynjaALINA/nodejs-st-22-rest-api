@@ -10,6 +10,8 @@ import {
   Query,
   HttpStatus,
   HttpException,
+  Inject,
+  Logger,
 } from '@nestjs/common';
 
 import { handleError } from 'src/handle-errors/handleError';
@@ -18,6 +20,7 @@ import { CreateUserDto } from 'src/dto/create-user.dto';
 import { UpdateUserDto } from 'src/dto/update-user.dto';
 import { IQuery } from 'src/interfaces/users.interfaces';
 import { UsersService } from 'src/services/users/users.service';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Controller('users')
 export class UsersController {
