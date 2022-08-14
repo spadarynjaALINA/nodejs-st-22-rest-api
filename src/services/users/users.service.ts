@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from '../../../models/user';
 import { v4 as uuid } from 'uuid';
@@ -7,10 +6,15 @@ import { Op } from 'sequelize';
 import { IQuery, IUser } from 'src/interfaces/users.interfaces';
 import { CreateUserDto } from 'src/dto/create-user.dto';
 import { UpdateUserDto } from 'src/dto/update-user.dto';
+import { JwtService } from '@nestjs/jwt';
+import { LoginUserDto } from 'src/dto/login.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User) private userRepository: typeof User) {}
+  constructor(
+    @InjectModel(User) private userRepository: typeof User,
+    private jwt: JwtService,
+  ) {}
 
   async create(UserDto: CreateUserDto): Promise<IUser> {
     const newUser = {
@@ -18,8 +22,26 @@ export class UsersService {
       id: uuid(),
       isDeleted: false,
     };
+
     const user = await this.userRepository.create(newUser);
     return user;
+  }
+
+  async login(UserDto: LoginUserDto) {
+    const user = await this.userRepository.findOne({
+      where: { login: UserDto.login },
+    });
+    if (user) {
+      const payload = {
+        sub: user.id,
+        email: user.login,
+      };
+      const token = this.jwt.signAsync(payload, {
+        expiresIn: process.env.TOKEN_EXPIRE_TIME,
+        secret: process.env.JWT_SECRET_KEY,
+      });
+      return token;
+    }
   }
 
   async getAutoSuggestUsers(query: IQuery): Promise<IUser[]> {
