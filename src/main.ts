@@ -1,16 +1,14 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './modules/app.module';
-import { WinstonModule, WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
-import * as winston from 'winston';
-import logger from '@nestjs/common';
-import { transports } from 'winston';
+
 async function bootstrap() {
   const PORT = process.env.PORT;
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('/v1');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+  app.enableCors();
 
   await app.listen(PORT ?? 3000);
   process.on('unhandledRejection', (error) => {

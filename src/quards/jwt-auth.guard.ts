@@ -25,3 +25,4 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     return user;
   }
 }
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MmRlNGM0Ni1jZDQzLTRiNjctOTA0ZC1iZGRmYmZiNzU0MjEiLCJlbWFpbCI6ImFiZyIsImlhdCI6MTY2MDQ4MDMwMiwiZXhwIjoxNjYwNTY2NzAyfQ.ZQz3jZNyXwEVKabmzwWJ82i5-Y9kIHxbKPlQhLEde1I
