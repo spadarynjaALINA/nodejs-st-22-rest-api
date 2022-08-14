@@ -8,6 +8,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
+import { JsonWebTokenError } from 'jsonwebtoken';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Catch()
@@ -23,6 +24,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+
     const httpStatus =
       exception instanceof HttpException
         ? exception.getStatus()

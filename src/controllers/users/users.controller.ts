@@ -9,9 +9,7 @@ import {
   HttpCode,
   Query,
   HttpStatus,
-  HttpException,
-  Inject,
-  Logger,
+  UseGuards,
 } from '@nestjs/common';
 
 import { handleError } from 'src/handle-errors/handleError';
@@ -20,12 +18,13 @@ import { CreateUserDto } from 'src/dto/create-user.dto';
 import { UpdateUserDto } from 'src/dto/update-user.dto';
 import { IQuery } from 'src/interfaces/users.interfaces';
 import { UsersService } from 'src/services/users/users.service';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { LoginUserDto } from 'src/dto/login.dto';
+import { JwtAuthGuard } from 'src/quards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
+  @UseGuards(JwtAuthGuard)
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
@@ -34,6 +33,12 @@ export class UsersController {
     });
   }
 
+  @Post('login')
+  @HttpCode(HttpStatus.OK)
+  async login(@Body() loginUserDto: LoginUserDto) {
+    return await this.usersService.login(loginUserDto);
+  }
+  @UseGuards(JwtAuthGuard)
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAutoSuggestUsers(@Query() query: IQuery) {
@@ -41,7 +46,7 @@ export class UsersController {
       .getAutoSuggestUsers(query)
       .catch((err) => handleError(err));
   }
-
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
@@ -50,7 +55,7 @@ export class UsersController {
       .then((user) => checkUser(user))
       .catch((err) => handleError(err, id));
   }
-
+  @UseGuards(JwtAuthGuard)
   @Put()
   @HttpCode(HttpStatus.OK)
   async update(@Body() updateUserDto: UpdateUserDto) {
@@ -59,7 +64,7 @@ export class UsersController {
       .then((user) => checkUser(user))
       .catch((err) => handleError(err, updateUserDto.id, updateUserDto.login));
   }
-
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {

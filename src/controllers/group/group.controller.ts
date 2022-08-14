@@ -8,30 +8,28 @@ import {
   Put,
   HttpCode,
   HttpStatus,
-  Inject,
-  Logger,
+  UseGuards,
 } from '@nestjs/common';
-import { handleError } from 'src/handle-errors/handleError';
-import { CreateGroupDto } from 'src/dto/create-Group.dto';
-import { GroupService } from 'src/services/group/group.service';
-import { checkGroup } from 'src/handle-errors/check-user';
-import { IGroup } from 'src/interfaces/group.interface';
-import { AddUserDto } from 'src/dto/addUser';
-import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { handleError } from './../../handle-errors/handleError';
+import { CreateGroupDto } from './../../dto/create-Group.dto';
+import { GroupService } from './../../services/group/group.service';
+import { checkGroup } from './../../handle-errors/check-user';
+import { IGroup } from './../../interfaces/group.interface';
+import { AddUserDto } from './../../dto/addUser';
+import { JwtAuthGuard } from 'src/quards/jwt-auth.guard';
 @Controller('groups')
+@UseGuards(JwtAuthGuard)
 export class GroupController {
-  constructor(
-    private readonly GroupsService: GroupService,
-  ) {}
+  constructor(private readonly GroupsService: GroupService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createGroupDto: CreateGroupDto) {
     return await this.GroupsService.create(createGroupDto).catch((err) => {
       handleError(err, createGroupDto.name, createGroupDto.name);
-
     });
   }
+
   @Post(':id')
   @HttpCode(HttpStatus.OK)
   async addUsersToGroup(@Param('id') id: string, @Body() addUser: AddUserDto) {
