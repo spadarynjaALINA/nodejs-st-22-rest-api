@@ -11,7 +11,7 @@ export default (sequelize, DataTypes) => {
       // define association here
     }
   }
-  userGroup.init(
+  userGroups.init(
     {
       groupId: DataTypes.STRING,
       userId: DataTypes.STRING,

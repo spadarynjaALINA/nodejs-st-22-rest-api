@@ -3,7 +3,6 @@ import {
   Model,
   Column,
   DataType,
-  BelongsTo,
   BelongsToMany,
 } from 'sequelize-typescript';
 import { Group } from './group';
