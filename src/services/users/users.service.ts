@@ -8,6 +8,7 @@ import { CreateUserDto } from './../../dto/create-user.dto';
 import { LoginUserDto } from './../../dto/login.dto';
 import { UpdateUserDto } from './../../dto/update-user.dto';
 import { IUser, IQuery } from './../../interfaces/users.interfaces';
+import { check, checkUser } from './../../handle-errors/check-user';
 
 @Injectable()
 export class UsersService {
@@ -40,25 +41,27 @@ export class UsersService {
         expiresIn: process.env.TOKEN_EXPIRE_TIME,
         secret: process.env.JWT_SECRET_KEY,
       });
-      console.log(token);
       return token;
+    } else {
+      return checkUser(user);
     }
   }
 
   async getAutoSuggestUsers(query: IQuery): Promise<IUser[]> {
-    const users = await this.userRepository.findAndCountAll({
+    const users = await this.userRepository.findAll({
       where: { login: { [Op.substring]: query.loginSubstring || '' } },
       limit: query.limit || 15,
       order: [['login', 'ASC']],
     });
-    return users.rows;
+    return check(users);
   }
 
   async findOne(id: string): Promise<IUser> {
-    return await this.userRepository.findOne({
+    const user = await this.userRepository.findOne({
       where: { id: id },
       include: { all: true },
     });
+    return checkUser(user);
   }
 
   async update(updateUserDto: UpdateUserDto): Promise<IUser> {
@@ -66,7 +69,7 @@ export class UsersService {
       where: { id: updateUserDto.id },
       returning: true,
     });
-    return user[1][0];
+    return checkUser(user[1][0]);
   }
 
   async remove(id: string): Promise<IUser> {
@@ -78,7 +81,7 @@ export class UsersService {
           returning: true,
         },
       );
-      return user[1][0];
+      return checkUser(user[1][0]);
     }
   }
 }

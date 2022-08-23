@@ -6,7 +6,7 @@ import { Group } from './../../models/group';
 import { GroupService } from './../../services/group/group.service';
 import { GroupController } from './group.controller';
 import { AddUserDto } from './../../dto/addUser';
-describe('UsersController', () => {
+describe('GroupsController', () => {
   let controller: GroupController;
   let groupService: GroupService;
   const group: IGroup = {
