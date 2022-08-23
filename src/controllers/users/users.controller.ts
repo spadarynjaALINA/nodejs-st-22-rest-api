@@ -29,9 +29,7 @@ export class UsersController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto).catch((err) => {
-      handleError(err, createUserDto.login, createUserDto.login);
-    });
+    return await this.usersService.create(createUserDto);
   }
 
   @Post('login')
@@ -43,35 +41,24 @@ export class UsersController {
   @Get()
   @HttpCode(HttpStatus.OK)
   async getAutoSuggestUsers(@Query() query: IQuery) {
-    return await this.usersService
-      .getAutoSuggestUsers(query)
-      .catch((err) => handleError(err));
+    return await this.usersService.getAutoSuggestUsers(query);
   }
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findOne(@Param('id') id: string) {
-    return await this.usersService
-      .findOne(id)
-      .then((user) => checkUser(user))
-      .catch((err) => handleError(err, id));
+    return await this.usersService.findOne(id);
   }
   @UseGuards(JwtAuthGuard)
   @Put()
   @HttpCode(HttpStatus.OK)
   async update(@Body() updateUserDto: UpdateUserDto) {
-    return await this.usersService
-      .update(updateUserDto)
-      .then((user) => checkUser(user))
-      .catch((err) => handleError(err, updateUserDto.id, updateUserDto.login));
+    return await this.usersService.update(updateUserDto);
   }
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string) {
-    return await this.usersService
-      .remove(id)
-      .then((user) => checkUser(user))
-      .catch((err) => handleError(err, id));
+    return await this.usersService.remove(id);
   }
 }
