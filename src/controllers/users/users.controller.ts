@@ -12,14 +12,15 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { handleError } from 'src/handle-errors/handleError';
-import { checkUser } from 'src/handle-errors/check-user';
-import { CreateUserDto } from 'src/dto/create-user.dto';
-import { UpdateUserDto } from 'src/dto/update-user.dto';
-import { IQuery } from 'src/interfaces/users.interfaces';
-import { UsersService } from 'src/services/users/users.service';
-import { LoginUserDto } from 'src/dto/login.dto';
-import { JwtAuthGuard } from 'src/quards/jwt-auth.guard';
+import { handleError } from './../../handle-errors/handleError';
+import { checkUser } from './../../handle-errors/check-user';
+
+import { UpdateUserDto } from './../../dto/update-user.dto';
+import { IQuery } from './../../interfaces/users.interfaces';
+import { UsersService } from './../../services/users/users.service';
+import { LoginUserDto } from './../../dto/login.dto';
+import { JwtAuthGuard } from './../../quards/jwt-auth.guard';
+import { CreateUserDto } from './../../dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {

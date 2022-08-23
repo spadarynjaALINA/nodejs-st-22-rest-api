@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { User } from '../../../models/user';
+import { User } from './../../models/user';
 import { v4 as uuid } from 'uuid';
 import { Op } from 'sequelize';
-import { IQuery, IUser } from 'src/interfaces/users.interfaces';
-import { CreateUserDto } from 'src/dto/create-user.dto';
-import { UpdateUserDto } from 'src/dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
-import { LoginUserDto } from 'src/dto/login.dto';
+import { CreateUserDto } from './../../dto/create-user.dto';
+import { LoginUserDto } from './../../dto/login.dto';
+import { UpdateUserDto } from './../../dto/update-user.dto';
+import { IUser, IQuery } from './../../interfaces/users.interfaces';
 
 @Injectable()
 export class UsersService {
@@ -40,6 +40,7 @@ export class UsersService {
         expiresIn: process.env.TOKEN_EXPIRE_TIME,
         secret: process.env.JWT_SECRET_KEY,
       });
+      console.log(token);
       return token;
     }
   }

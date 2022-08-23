@@ -1,20 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { IGroup } from 'src/interfaces/group.interface';
+import { IGroup } from './../../interfaces/group.interface';
 import { v4 as uuid } from 'uuid';
-import { Op } from 'sequelize';
-import { CreateGroupDto } from 'src/dto/create-group.dto';
+import { CreateGroupDto } from './../../dto/create-group.dto';
 import { InjectModel } from '@nestjs/sequelize';
-import { Group } from 'models/group';
+import { Group } from './../../models/group';
 import { Sequelize } from 'sequelize-typescript';
-import { User } from 'models/user';
-import { AddUserDto } from 'src/dto/addUser';
-import { handleError } from 'src/handle-errors/handleError';
+import { User } from './../../models/user';
+import { AddUserDto } from './../../dto/addUser';
+import { handleError } from './../../handle-errors/handleError';
+import { check, checkGroup, checkUser } from './../../handle-errors/check-user';
+import { UsersService } from '../users/users.service';
 @Injectable()
 export class GroupService {
   constructor(
     @InjectModel(Group) private groupRepository: typeof Group,
-    @InjectModel(User) private userRepository: typeof User,
     private sequelize: Sequelize,
+    @InjectModel(User)
+    private userRepository: typeof User,
   ) {}
 
   async create(GroupDto: CreateGroupDto): Promise<IGroup> {
@@ -26,34 +28,27 @@ export class GroupService {
     return group;
   }
   async addUsersToGroup(addUserDto: AddUserDto, id: string) {
-    try {
-      await this.sequelize.transaction(async (t) => {
-        const group = await this.groupRepository.findOne({
+    await this.sequelize.transaction(async (t) => {
+      const group = await this.groupRepository
+        .findOne({
           where: { id: id },
           transaction: t,
-        });
-        if (group) {
-          const user = await this.groupRepository.findOne({
-            where: { id: id },
-            transaction: t,
-          });
-          if (user) {
-            return await group.$add('user', addUserDto.userIds, {
-              transaction: t,
-            });
-          } else {
-            return handleError('byIdGroup');
-          }
-        } else {
-          return handleError('byId');
-        }
+        })
+        .then((group) => checkGroup(group, id));
+
+      await this.userRepository
+        .findOne({
+          where: { id: addUserDto.userIds[0] },
+          transaction: t,
+        })
+        .then((user) => checkUser(user, addUserDto.userIds[0]));
+      return await group.$add('user', addUserDto.userIds, {
+        transaction: t,
       });
-      return await this.findOne(id);
-    } catch (err) {
-      throw err;
-    }
+    });
+    return this.findOne(id);
   }
-  async getAllGroups(): Promise<IGroup[]> {
+  async getAutoSuggestGroups(): Promise<IGroup[]> {
     const groups = await this.groupRepository.findAll({
       include: [
         {
@@ -66,11 +61,11 @@ export class GroupService {
         },
       ],
     });
-    return groups;
+    return check(groups);
   }
 
   async findOne(id: string): Promise<IGroup> {
-    return await this.groupRepository.findOne({
+    const group = await this.groupRepository.findOne({
       where: { id: id },
       include: [
         {
@@ -83,6 +78,7 @@ export class GroupService {
         },
       ],
     });
+    return checkGroup(group, id);
   }
 
   async update(updateGroupDto: IGroup): Promise<IGroup> {
@@ -90,13 +86,13 @@ export class GroupService {
       where: { id: updateGroupDto.id },
       returning: true,
     });
-    return group[1][0];
+    return checkGroup(group[1][0], updateGroupDto.id);
   }
 
   async remove(id: string): Promise<IGroup> {
     const group = await this.groupRepository.destroy({
       where: { id },
     });
-    return group[1][0];
+    return checkGroup(group[1][0], id);
   }
 }

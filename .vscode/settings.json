@@ -2,5 +2,6 @@
 	"cSpell.words": [
 		"nestjs",
 		"uuidv"
-	]
+	],
+	"editor.guides.bracketPairs": "active"
 }

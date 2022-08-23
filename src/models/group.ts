@@ -1,3 +1,4 @@
+import { Permission } from './../interfaces/group.interface';
 import {
   Table,
   Model,
@@ -5,7 +6,7 @@ import {
   DataType,
   BelongsToMany,
 } from 'sequelize-typescript';
-import { Permission } from 'src/interfaces/group.interface';
+
 import { User } from './user';
 import { UserGroups } from './user-group';
 
